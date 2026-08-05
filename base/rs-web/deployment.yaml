@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: rs-web
+  namespace: robotshop
+  labels:
+    app: rs-web
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: rs-web
+
+  strategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: rs-web
+
+    spec:
+      containers:
+      - name: rs-web
+
+        image: us-east1-docker.pkg.dev/ps-devops-project/robotshop/rs-web:4
+
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: CATALOGUE_HOST
+          value: "catalogue"
+
+        - name: USER_HOST
+          value: "user"
+
+        - name: CART_HOST
+          value: "cart"
+
+        - name: SHIPPING_HOST
+          value: "shipping"
+
+        - name: PAYMENT_HOST
+          value: "payment"
+
+        - name: RATINGS_HOST
+          value: "ratings"
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5

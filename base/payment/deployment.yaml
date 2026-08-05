@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: payment
+  namespace: robotshop
+  labels:
+    app: payment
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: payment
+
+  strategy:
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: payment
+
+    spec:
+      containers:
+      - name: payment
+
+        image: us-east1-docker.pkg.dev/ps-devops-project/robotshop/payment:2
+
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: AMQP_HOST
+          value: "rabbitmq"
+
+        - name: AMQP_USER
+          value: "robotshop"
+
+        - name: AMQP_PASS
+          value: "robotshop123"
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5

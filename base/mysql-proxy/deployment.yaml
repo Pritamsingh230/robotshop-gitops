@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: cloudsql-proxy
+  namespace: robotshop
+  labels:
+    app: cloudsql-proxy
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: cloudsql-proxy
+
+  strategy:
+    type: Recreate
+
+  template:
+    metadata:
+      labels:
+        app: cloudsql-proxy
+
+    spec:
+      serviceAccountName: cloudsql-proxy
+
+      containers:
+      - name: cloudsql-proxy
+
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.18.3
+        imagePullPolicy: IfNotPresent
+
+        args:
+          - "--private-ip"
+          - "--structured-logs"
+          - "--port=3306"
+          - "ps-devops-project:us-east1:robotshop-mysql"
+
+        ports:
+          - name: mysql
+            containerPort: 3306
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+        readinessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 5
+          periodSeconds: 5

@@ -34,6 +34,7 @@ spec:
         args:
           - "--private-ip"
           - "--structured-logs"
+          - "--address=0.0.0.0"
           - "--port=3306"
           - "ps-devops-project:us-east1:robotshop-mysql"
 

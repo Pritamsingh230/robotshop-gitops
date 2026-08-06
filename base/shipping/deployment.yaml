@@ -26,7 +26,7 @@ spec:
       containers:
       - name: shipping
 
-        image: us-east1-docker.pkg.dev/ps-devops-project/robotshop/shipping:10
+        image: us-east1-docker.pkg.dev/ps-devops-project/robotshop/shipping:11
 
         imagePullPolicy: Always
 

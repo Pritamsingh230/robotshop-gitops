@@ -4,13 +4,16 @@ kind: Service
 metadata:
   name: rs-web
   namespace: robotshop
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
 
 spec:
+  type: ClusterIP
+
   selector:
     app: rs-web
 
   ports:
-  - port: 80
-    targetPort: 8080
-
-  type: ClusterIP
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
